@@ -3,6 +3,7 @@ const {ApolloServer} = require('apollo-server')
 const mongoose = require('mongoose')
 import {Query} from '../resolvers/Query'
 import {Mutation }from '../resolvers/Mutation'
+import User from '../resolvers/User'
 
 const typeDefs = require('../typeDefs/schema.js')
 // import User from '../resolvers/User'
@@ -28,8 +29,8 @@ const server = new ApolloServer({
     typeDefs,
     resolvers : {
         Query,
+        User,
         Mutation,
-        // User,
     },
     context: {
         // db,

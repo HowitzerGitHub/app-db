@@ -1,4 +1,5 @@
 const User = require('../models/User')
+const Team = require('../models/Team')
 
 module.exports = {
     Mutation: {
@@ -6,14 +7,9 @@ module.exports = {
             const { data } = args
 
             const emailTaken = await User.findOne({ userEmail: data.userEmail })
-                if (emailTaken) throw new Error('Email Already Taken')
-            
+            if (emailTaken) throw new Error('Email Already Taken')
+
             const user = new User({
-                // userName:  data.userName,
-                // userEmail:  data.userEmail,
-                // pic: data.pic,
-                // bio: data.bio,
-                // gender: data.gender
                 ...data
             });
             const { _id, userName, userEmail, bio, gender, createdAt } = await user.save();
@@ -30,16 +26,26 @@ module.exports = {
 
         async updateUser(parent, args, ctx, info) {
             const { id, data } = args;
-            const updateValues = { ...data }
-            const updatedUser = await User.findOneAndUpdate({ _id: id }, updateValues, { new: true })
+
+            const emailTaken = await User.findOne({ userEmail: data.userEmail })
+            if (emailTaken) throw new Error('Email Already Taken')
+
+            const teamExists = await Team.findById({'_id':data.team})
+            if(!teamExists) throw new Error("Specified team does not exist")
+
+            const updateValues = { ...data, team: undefined }
+
+            const updatedUser = await User.findOneAndUpdate({ _id: id }, { $set: updateValues, $addToSet: { teams: data.team }, }, { new: true })
             return updatedUser;
         },
 
+
         async deleteUser(parent, args, ctx, info) {
             const { id } = args;
+
             const deletedUser = await User.findByIdAndRemove({ _id: id });
-            console.log(deletedUser)
             const { _id, userName, userEmail, bio, gender, createdAt } = deletedUser;
+
             return {
                 _id,
                 userName,
@@ -48,6 +54,29 @@ module.exports = {
                 gender,
                 createdAt: createdAt.toDateString()
             }
+        },
+
+        async createTeam(parent, args, ctx, info) {
+            const { data } = args;
+
+            const userPresent = await User.findById(data.createdBy)
+            if (!userPresent) throw new Error("No such user present, check the createdBy")
+
+            const team = new Team({
+                ...data
+            })
+
+            const { _id, teamName, createdBy, createdAt, description, visibility } = await team.save()
+
+            return {
+                _id,
+                teamName,
+                createdAt: createdAt.toDateString(),
+                description,
+                visibility,
+                createdBy: userPresent
+            }
+
         }
     }
 }
