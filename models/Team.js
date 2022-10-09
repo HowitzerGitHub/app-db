@@ -4,7 +4,7 @@ const teamSchema = new Schema({
     teamName: String,
     description: String,
     visibility: Boolean,
-    createdBy: String,
+    createdBy: Schema.Types.ObjectId,
     createdAt: {
         type: Date,
         default: Date.now

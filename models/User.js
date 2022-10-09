@@ -5,9 +5,12 @@ const userSchema = new Schema({
     userEmail: String,
     pic: String,
     gender: String,
-    teams: Array,
+    teams: [{
+        type: Schema.Types.ObjectId, 
+        ref: "Team"
+    }],
     bio: String,
-    createdAt: {
+    createdAt: { 
         type: Date,
         default: Date.now
     }
