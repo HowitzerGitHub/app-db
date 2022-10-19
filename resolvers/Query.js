@@ -7,11 +7,13 @@ const Chapter = require('../models/Chapter')
 module.exports = {
     Query:{
         async user(parent,args,ctx,info){
+            // console.log(args)
             if(args.id){
                 const user = await User.findById(args.id)
                 return [user]
             }
             const user = await User.find()
+            // console.log(user)
             return user
         },
 
@@ -50,6 +52,17 @@ module.exports = {
 
             const chapter = await Chapter.find({})
             return chapter
+        },
+
+        async loginUser(parent,args,ctx,info){
+            const {userEmail, password} = args
+            const userExist = await User.findOne({"userEmail":userEmail})
+            if(!userExist) throw new Error("User with this email ID does not exist")
+            const authSucces = await User.findOne({ $and: [ {"userEmail" : { $eq:userEmail } } , { "password": {$eq:password} } ] })
+
+            if(userExist && !authSucces) throw new Error('Please Check your password')
+            // console.log(authSucces)
+            return authSucces
         }
     }
 }

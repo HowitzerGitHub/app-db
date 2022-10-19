@@ -7,6 +7,7 @@ const Chapter = require('../models/Chapter')
 module.exports = {
     Mutation: {
         async createUser(parent, args, ctx, info) {
+            // console.log('Here')
             const { data } = args
 
             const emailTaken = await User.findOne({ userEmail: data.userEmail })
@@ -221,7 +222,7 @@ module.exports = {
 
             const createdChapter = await chapter.save()
 
-            console.log(createdChapter)
+            // console.log(createdChapter)
             return createdChapter
         },
     }

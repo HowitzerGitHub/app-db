@@ -5,6 +5,7 @@ const userSchema = new Schema({
     userEmail: String,
     pic: String,
     gender: String,
+    password: String,
     teams: [{
         type: Schema.Types.ObjectId, 
         ref: "Team"

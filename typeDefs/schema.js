@@ -4,6 +4,7 @@ module.exports = gql`
 
 type Query{
     user(id: ID):           [User!]
+    loginUser(userEmail: String!, password: String!): User!
     team(id: ID):           [Team!]
     curriculum (id:ID):     [Curriculum!]
     subject(id:ID):         [Subject!]
@@ -38,6 +39,7 @@ type User{
     userEmail: String!
     pic: String
     gender: String
+    password: String
     bio: String
     teams: [Team!]
     createdAt: String
@@ -88,6 +90,7 @@ type Chapter{
 input CreateUserInput{
     userName: String!
     userEmail: String!
+    password : String!
     pic: String
     gender: String
     bio: String
@@ -97,6 +100,7 @@ input CreateUserInput{
 input UpdateUserInput{
     userName: String
     userEmail: String
+    password: String
     pic: String
     gender: String
     bio: String

@@ -9,7 +9,7 @@ const Team = {
     async curriculum(parent, args, ctx, info){
         // console.log(parent._id)
         const curriculum = await Curriculum.find({team: {$eq:parent._id}})
-        console.log(curriculum)
+        // console.log(curriculum)
         return curriculum
     },
     async members(parent, args, ctx, info){
