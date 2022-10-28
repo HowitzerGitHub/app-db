@@ -52,8 +52,8 @@ type Team{
     visibility: Boolean!
     createdBy: User
     createdAt: String
-    curriculum: [Curriculum]
-    members: [User]
+    curriculum: [Curriculum] #!
+    members: [User] #!
 }
 
 type Curriculum{
@@ -116,10 +116,10 @@ input CreateTeamInput{
 }
 
 input UpdateTeamInput{
-    teamName: String
+    teamName: String!
     description: String
-    visibility: Boolean
-    createdBy: ID
+    visibility: Boolean!
+    createdBy: ID!
 }
 
 input CreateCurriculumInput{

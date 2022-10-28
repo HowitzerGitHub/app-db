@@ -16,22 +16,16 @@ module.exports = {
             const user = new User({
                 ...data
             });
-            const { _id, userName, userEmail, bio, gender, createdAt } = await user.save();
-            return {
-                _id,
-                userName,
-                userEmail,
-                bio,
-                gender,
-                createdAt: createdAt.toDateString()
-            }
+            const newUser = await user.save();
+            return newUser;
         },
 
         async updateUser(parent, args, ctx, info) {
             const { id, data } = args;
-
+            console.log('here')
             if (data.userEmail) {
-                const emailTaken = await User.findOne({ userEmail: data.userEmail })
+                // const emailTaken = await User.findOne({ userEmail: data.userEmail })
+                const emailTaken = await User.findOne( {$and: [ {"userEmail" : {$eq: data.userEmail} } , {"_id" : {$ne: id} } ]} )
                 if (emailTaken) throw new Error('Email Already Taken')
             }
 
