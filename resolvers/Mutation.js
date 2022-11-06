@@ -7,7 +7,6 @@ const Chapter = require('../models/Chapter')
 module.exports = {
     Mutation: {
         async createUser(parent, args, ctx, info) {
-            // console.log('Here')
             const { data } = args
 
             const emailTaken = await User.findOne({ userEmail: data.userEmail })
@@ -24,7 +23,6 @@ module.exports = {
             const { id, data } = args;
             console.log('here')
             if (data.userEmail) {
-                // const emailTaken = await User.findOne({ userEmail: data.userEmail })
                 const emailTaken = await User.findOne( {$and: [ {"userEmail" : {$eq: data.userEmail} } , {"_id" : {$ne: id} } ]} )
                 if (emailTaken) throw new Error('Email Already Taken')
             }
@@ -104,9 +102,18 @@ module.exports = {
 
         async deleteTeam(parent, args, ctx, info) {
             const { id } = args;
-
+            let arg = {
+                id:''
+            }
             const teamExists = await Team.findById(id)
             if (!teamExists) throw new Error("Team does not Exists")
+
+            const curriculums = await Curriculum.find({"team":id})
+            for(let curriculum of curriculums){
+                console.log(curriculum)
+                arg.id=curriculum.id;
+                await this.deleteCurriculum(null,arg,null,null)
+            }
 
             const deletedTeam = await Team.findByIdAndRemove({ _id: id });
             return deletedTeam;
@@ -154,17 +161,24 @@ module.exports = {
 
         async deleteCurriculum(parent, args, ctx, info){
             const {id} = args
-
+            let arg = {
+                id:''
+            }
             const curriculumExists = await Curriculum.findById(id);
             if (!curriculumExists) throw new Error("Curriculum doses not exists") 
 
+            const subjects = await Subject.find({"curriculum":id},{curriculum:1})
+
+            for(let subject of subjects){
+                arg.id=subject.id;
+                await this.deleteSubject(null,arg,null,null)
+            }
             const deletedCurriculum =  await Curriculum.findByIdAndRemove(id)
             return deletedCurriculum;
         },
 
         async createSubject(parent, args, ctx, info){
             const {data} = args
-            // console.log(data.curriculum)
             const curriculumExists = await Curriculum.findById(data.curriculum)
             if(!curriculumExists) throw new Error("Curriculum does not exists")
 
@@ -197,6 +211,7 @@ module.exports = {
         },
 
         async deleteSubject(parent, args, ctx, info){
+            await Chapter.deleteMany({"subject": {$eq:args.id}})
             const deletedSubject = await Subject.findByIdAndRemove(args.id)
             return deletedSubject;
         },
@@ -215,9 +230,12 @@ module.exports = {
             })
 
             const createdChapter = await chapter.save()
-
-            // console.log(createdChapter)
             return createdChapter
         },
+
+        async deleteChapter(parent, args, ctx, info){
+            const deletedChapter = await Chapter.findByIdAndRemove(args.id)
+            return deletedChapter;
+        }
     }
 }
