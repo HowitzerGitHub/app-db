@@ -21,7 +21,7 @@ const MONGODB = "mongodb+srv://projectDB1:DbUz8mxv7WT6t5X@cluster0.56hu5nl.mongo
 
 mongoose.connect(MONGODB).then(()=>{
     console.log('MongoDB Connected......')
-    return server.listen({port:5000})
+    return server.listen({port:5001})
 }).then((res)=>{
     console.log(`Server is running at ${res.url}`)
 })
