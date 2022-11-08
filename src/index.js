@@ -1,8 +1,6 @@
 const {ApolloServer} = require('apollo-server')
 const mongoose = require('mongoose')
 
-const {ApolloServerPluginLandingPageLocalDefault} = require('apollo-server-core')
-
 const typeDefs = require('../typeDefs/schema.js')
 
 import {Query} from '../resolvers/Query'
@@ -39,12 +37,6 @@ const server = new ApolloServer({
         Chapter,
         Mutation,
     },
-
-    csrfPrevention: true,
-    cache: "bounded",
-    plugins: [
-      ApolloServerPluginLandingPageLocalDefault(),
-    ],
     context: {
         // pubsub
     }
